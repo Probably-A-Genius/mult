@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Multiplication Trainer</title>
+  <style>
+    body {
+      background: #000;
+      color: #00ff88;
+      font-family: monospace;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      text-align: center;
+    }
+    .top-bar {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      font-size: 18px;
+    }
+    .problem {
+      font-size: 48px;
+      margin-bottom: 20px;
+    }
+    input {
+      font-size: 32px;
+      background: black;
+      border: 2px solid #00ff88;
+      color: #00ff88;
+      text-align: center;
+      width: 150px;
+    }
+    .stats {
+      display: none;
+      text-align: left;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    button {
+      margin-top: 20px;
+      background: black;
+      border: 2px solid #00ff88;
+      color: #00ff88;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="top-bar" id="counter"></div>
+  <div class="container" id="main">
+    <div class="problem" id="problem"></div>
+    <input id="answer" autocomplete="off" />
+  </div>
+
+  <div class="stats" id="stats"></div>
+
+  <script>
+    let problems = [];
+    let currentIndex = 0;
+    let startTime;
+    let problemStartTime;
+    let results = [];
+
+    function generateProblems() {
+      for (let a = 2; a <= 12; a++) {
+        for (let b = 2; b <= 100; b++) {
+          problems.push({ a, b });
+        }
+      }
+      problems = shuffle(problems);
+    }
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function showProblem() {
+      if (currentIndex >= problems.length) {
+        showStats();
+        return;
+      }
+
+      const { a, b } = problems[currentIndex];
+      document.getElementById("problem").textContent = `${a} × ${b}`;
+      document.getElementById("answer").value = "";
+      document.getElementById("counter").textContent = `${currentIndex + 1} / ${problems.length}`;
+
+      problemStartTime = performance.now();
+    }
+
+    let backspaceUsed = false;
+
+    document.getElementById("answer").addEventListener("keydown", (e) => {
+      if (e.key === "Backspace") {
+        backspaceUsed = true;
+      }
+    });
+
+    document.getElementById("answer").addEventListener("input", () => {
+      const val = document.getElementById("answer").value;
+      const { a, b } = problems[currentIndex];
+      const correct = a * b;
+
+      if (Number(val) === correct) {
+        const timeTaken = (performance.now() - problemStartTime) / 1000;
+
+        results.push({
+          problem: `${a} × ${b}`,
+          time: timeTaken,
+          backspace: backspaceUsed
+        });
+
+        backspaceUsed = false;
+        currentIndex++;
+        showProblem();
+      }
+    });
+
+    function showStats() {
+      document.getElementById("main").style.display = "none";
+      const statsDiv = document.getElementById("stats");
+      statsDiv.style.display = "block";
+
+      const totalTime = results.reduce((sum, r) => sum + r.time, 0);
+      const avgTime = totalTime / results.length;
+
+      let html = `<h2>Results</h2>`;
+      html += `<p>Total Problems: ${results.length}</p>`;
+      html += `<p>Total Time: ${totalTime.toFixed(2)}s</p>`;
+      html += `<p>Average Time: ${avgTime.toFixed(2)}s</p>`;
+      html += `<hr>`;
+
+      results.forEach(r => {
+        html += `<p>${r.problem} — ${r.time.toFixed(2)}s ${r.backspace ? '(Backspace)' : ''}</p>`;
+      });
+
+      html += `<button onclick="location.reload()">Restart</button>`;
+
+      statsDiv.innerHTML = html;
+    }
+
+    generateProblems();
+    showProblem();
+    document.getElementById("answer").focus();
+  </script>
+</body>
+</html>
