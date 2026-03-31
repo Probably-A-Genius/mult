@@ -17,6 +17,12 @@
     .container {
       text-align: center;
     }
+    .end-btn {
+      margin-top: 15px;
+      font-size: 14px;
+      padding: 6px 12px;
+      opacity: 0.7;
+    }
     .top-bar {
       position: absolute;
       top: 10px;
@@ -56,6 +62,8 @@
   <div class="container" id="main">
     <div class="problem" id="problem"></div>
     <input id="answer" autocomplete="off" />
+    <br>
+    <button class="end-btn" onclick="endEarly()">End Run</button>
   </div>
 
   <div class="stats" id="stats"></div>
@@ -125,6 +133,10 @@
         showProblem();
       }
     });
+
+    function endEarly() {
+      showStats();
+    }
 
     function showStats() {
       document.getElementById("main").style.display = "none";
