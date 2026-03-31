@@ -17,12 +17,6 @@
     .container {
       text-align: center;
     }
-    .end-btn {
-      margin-top: 15px;
-      font-size: 14px;
-      padding: 6px 12px;
-      opacity: 0.7;
-    }
     .top-bar {
       position: absolute;
       top: 10px;
@@ -40,6 +34,12 @@
       color: #00ff88;
       text-align: center;
       width: 150px;
+    }
+    .end-btn {
+      margin-top: 15px;
+      font-size: 14px;
+      padding: 6px 12px;
+      opacity: 0.7;
     }
     .stats {
       display: none;
@@ -65,6 +65,7 @@
 </head>
 <body>
   <div class="top-bar" id="counter"></div>
+
   <div class="container" id="main">
     <div class="problem" id="problem"></div>
     <input id="answer" autocomplete="off" />
@@ -77,9 +78,9 @@
   <script>
     let problems = [];
     let currentIndex = 0;
-    let startTime;
     let problemStartTime;
     let results = [];
+    let backspaceUsed = false;
 
     function generateProblems() {
       for (let a = 2; a <= 12; a++) {
@@ -87,7 +88,7 @@
           problems.push({ a, b });
         }
       }
-      problems = shuffle(problems);
+      shuffle(problems);
     }
 
     function shuffle(array) {
@@ -95,7 +96,6 @@
         const j = Math.floor(Math.random() * (i + 1));
         [array[i], array[j]] = [array[j], array[i]];
       }
-      return array;
     }
 
     function showProblem() {
@@ -112,12 +112,8 @@
       problemStartTime = performance.now();
     }
 
-    let backspaceUsed = false;
-
     document.getElementById("answer").addEventListener("keydown", (e) => {
-      if (e.key === "Backspace") {
-        backspaceUsed = true;
-      }
+      if (e.key === "Backspace") backspaceUsed = true;
     });
 
     document.getElementById("answer").addEventListener("input", () => {
@@ -182,7 +178,6 @@
       html += `<button onclick="location.reload()">Restart</button>`;
 
       statsDiv.innerHTML = html;
-    }
     }
 
     generateProblems();
