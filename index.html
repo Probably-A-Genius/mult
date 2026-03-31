@@ -44,9 +44,15 @@
     .stats {
       display: none;
       text-align: left;
-      max-height: 80vh;
+      max-height: 90vh;
       overflow-y: auto;
+      width: 90vw;
+      margin: 0 auto;
+      font-size: 18px;
+      line-height: 1.6;
     }
+    .stats h2 { font-size: 28px; }
+    .stats p { margin: 6px 0; }
     button {
       margin-top: 20px;
       background: black;
@@ -143,13 +149,30 @@
       const statsDiv = document.getElementById("stats");
       statsDiv.style.display = "block";
 
+      if (results.length === 0) {
+        statsDiv.innerHTML = `<h2>No data</h2><button onclick="location.reload()">Restart</button>`;
+        return;
+      }
+
       const totalTime = results.reduce((sum, r) => sum + r.time, 0);
       const avgTime = totalTime / results.length;
 
+      let fastest = results[0];
+      let slowest = results[0];
+
+      results.forEach(r => {
+        if (r.time < fastest.time) fastest = r;
+        if (r.time > slowest.time) slowest = r;
+      });
+
       let html = `<h2>Results</h2>`;
-      html += `<p>Total Problems: ${results.length}</p>`;
-      html += `<p>Total Time: ${totalTime.toFixed(2)}s</p>`;
-      html += `<p>Average Time: ${avgTime.toFixed(2)}s</p>`;
+      html += `<p><b>Total Problems:</b> ${results.length}</p>`;
+      html += `<p><b>Total Time:</b> ${totalTime.toFixed(2)}s</p>`;
+      html += `<p><b>Average Time:</b> ${avgTime.toFixed(2)}s</p>`;
+      html += `<hr>`;
+
+      html += `<p><b>Fastest:</b> ${fastest.problem} — ${fastest.time.toFixed(2)}s</p>`;
+      html += `<p><b>Slowest:</b> ${slowest.problem} — ${slowest.time.toFixed(2)}s</p>`;
       html += `<hr>`;
 
       results.forEach(r => {
@@ -159,6 +182,7 @@
       html += `<button onclick="location.reload()">Restart</button>`;
 
       statsDiv.innerHTML = html;
+    }
     }
 
     generateProblems();
