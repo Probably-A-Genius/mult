@@ -151,6 +151,7 @@
       }
 
       const totalTime = results.reduce((sum, r) => sum + r.time, 0);
+      const backspaceCount = results.filter(r => r.backspace).length;
       const avgTime = totalTime / results.length;
 
       let fastest = results[0];
@@ -165,6 +166,7 @@
       html += `<p><b>Total Problems:</b> ${results.length}</p>`;
       html += `<p><b>Total Time:</b> ${totalTime.toFixed(2)}s</p>`;
       html += `<p><b>Average Time:</b> ${avgTime.toFixed(2)}s</p>`;
+      html += `<p><b>Backspace Used:</b> ${backspaceCount} problems</p>`;
       html += `<hr>`;
 
       html += `<p><b>Fastest:</b> ${fastest.problem} — ${fastest.time.toFixed(2)}s</p>`;
